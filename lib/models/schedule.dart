@@ -1,16 +1,16 @@
-import 'package:agendamaq/models/locality.dart';
-import 'package:agendamaq/models/machine.dart';
 import 'package:flutter/material.dart';
 
 class Schedule with ChangeNotifier {
-  final String mes;
+  final String id;
+  final String month;
   final int year;
   final int workload;
-  final Machine machine;
-  final Locality locality;
+  final String machine;
+  final String locality;
 
   Schedule({
-    required this.mes,
+    required this.id,
+    required this.month,
     required this.year,
     required this.workload,
     required this.machine,

@@ -1,24 +1,25 @@
-import 'package:agendamaq/controller/locality_controller.dart';
-import 'package:agendamaq/models/locality.dart';
+import 'package:agendamaq/controller/services_controller.dart';
+import 'package:agendamaq/models/service.dart';
 import 'package:agendamaq/routers/routers.dart';
 import 'package:agendamaq/static/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-class LocalityPage extends StatefulWidget {
-  const LocalityPage({super.key});
+class ServicePage extends StatefulWidget {
+  const ServicePage({super.key});
 
   @override
-  State<LocalityPage> createState() => _LocalityPageState();
+  State<ServicePage> createState() => _ServicePageState();
 }
 
-class _LocalityPageState extends State<LocalityPage> {
+class _ServicePageState extends State<ServicePage> {
   bool _isLoading = true;
   @override
   void initState() {
     super.initState();
-    Provider.of<LocalityController>(context, listen: false)
-        .loadLocalitys()
+    Provider.of<ServicesController>(context, listen: false)
+        .loadServices()
         .then((_) {
       setState(() {
         _isLoading = false;
@@ -28,12 +29,12 @@ class _LocalityPageState extends State<LocalityPage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<LocalityController>(context).items;
-    final List<Locality> loadedLocality = provider;
+    final provider = Provider.of<ServicesController>(context).items;
+    final List<Service> loadedService = provider;
     return Scaffold(
       backgroundColor: AgendaColors.setGrey,
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Center(
@@ -43,22 +44,22 @@ class _LocalityPageState extends State<LocalityPage> {
                   Container(
                     height: MediaQuery.of(context).size.height * 0.7,
                     child: ListView.builder(
-                      itemCount: loadedLocality.length,
+                      itemCount: loadedService.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
                             tileColor: Colors.white,
-                            title: Text(loadedLocality[index].name),
+                            title: Text(
+                                '${loadedService[index].name}-${DateFormat('dd/MM/yyyy').format(loadedService[index].date)}'),
                             subtitle: Text(
-                              '${loadedLocality[index].latitude}, ${loadedLocality[index].longitude}',
+                              loadedService[index].status,
                             ),
                             trailing: IconButton(
                               onPressed: () {
                                 Navigator.of(context).pushNamed(
-                                  AppRouters.CREATE_LOCALITY,
-                                  arguments: loadedLocality[index],
-                                );
+                                    AppRouters.CREATE_SERVICE,
+                                    arguments: loadedService[index]);
                               },
                               icon: Icon(
                                 Icons.edit,
@@ -73,7 +74,7 @@ class _LocalityPageState extends State<LocalityPage> {
                   FloatingActionButton(
                     onPressed: () {
                       Navigator.of(context)
-                          .pushNamed(AppRouters.CREATE_LOCALITY);
+                          .pushNamed(AppRouters.CREATE_SERVICE);
                     },
                     backgroundColor: AgendaColors.setGreen,
                     child: Icon(Icons.add),

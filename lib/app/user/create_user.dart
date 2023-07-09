@@ -12,6 +12,7 @@ class CreateUser extends StatefulWidget {
 
 class _CreateUserState extends State<CreateUser> {
   final _formKey = GlobalKey<FormState>();
+  final Map<String, Object> _formData = {};
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _telefoneController = TextEditingController();
@@ -67,13 +68,15 @@ class _CreateUserState extends State<CreateUser> {
               const SizedBox(
                 height: 10,
               ),
-              TextFormFieldAdd(_nameController, 'Nome'),
+              TextFormFieldAdd(_nameController, 'Nome', 'name', _formData),
               const SizedBox(height: 20),
-              TextFormFieldAdd(_emailController, 'Email'),
+              TextFormFieldAdd(_emailController, 'Email', 'email', _formData),
               const SizedBox(height: 20),
-              TextFormFieldAdd(_telefoneController, 'Telefone'),
+              TextFormFieldAdd(
+                  _telefoneController, 'Telefone', 'phone', _formData),
               const SizedBox(height: 20),
-              PassFormFieldAdd(_passwordController, 'Senha'),
+              PassFormFieldAdd(
+                  _passwordController, 'Senha', 'password', _formData),
               const SizedBox(height: 50),
               Center(
                 child: SizedBox(

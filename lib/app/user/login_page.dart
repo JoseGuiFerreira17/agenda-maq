@@ -1,9 +1,10 @@
-import 'package:agendamaq/app/components/password_form.dart';
-import 'package:agendamaq/app/components/text_form.dart';
-import 'package:agendamaq/services/auth_services.dart';
+import 'dart:convert';
+
+import 'package:agendamaq/routers/routers.dart';
 import 'package:agendamaq/static/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -51,9 +52,34 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(
                 height: 20,
               ),
-              TextFormFieldAdd(_emailController, 'Email'),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: const OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AgendaColors.setGreen,
+                    ),
+                  ),
+                ),
+                controller: _emailController,
+                keyboardType: TextInputType.text,
+              ),
               const SizedBox(height: 20),
-              PassFormFieldAdd(_passwordController, 'Senha'),
+              TextFormField(
+                decoration: InputDecoration(
+                  labelText: 'Senha',
+                  border: const OutlineInputBorder(),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AgendaColors.setGreen,
+                    ),
+                  ),
+                ),
+                controller: _passwordController,
+                obscureText: true,
+                keyboardType: TextInputType.text,
+              ),
               const SizedBox(height: 50),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -71,9 +97,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          login();
-                        }
+                        login();
                       },
                       style: ElevatedButton.styleFrom(
                           backgroundColor: AgendaColors.setGreen),
@@ -105,16 +129,29 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  login() async {
-    try {
-      await context.read<AuthSevices>().login(
-            _emailController.text,
-            _passwordController.text,
-          );
-    } on AuthException catch (error) {
+  Future<void> login() async {
+    var body = {
+      "email": _emailController.text,
+      "password": _passwordController.text,
+    };
+    final response = await http
+        .post(Uri.parse('http://192.168.0.135:8000/api/token/'), body: body);
+    if (response.statusCode == 200) {
+      Map<String, dynamic> token = jsonDecode(response.body);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('access', 'Bearer ${token['access'].toString()}');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(error.message.toString()),
+        const SnackBar(
+          content: Text('Login feito com sucesso'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.of(context).pushReplacementNamed(AppRouters.HOME);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Email ou senha incorretos'),
+          backgroundColor: Colors.red,
         ),
       );
     }

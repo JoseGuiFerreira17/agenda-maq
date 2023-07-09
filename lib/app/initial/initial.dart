@@ -68,7 +68,7 @@ class InitialPage extends StatelessWidget {
             Center(
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, AppRouters.LOGIN_PAGE);
+                  Navigator.pushNamed(context, AppRouters.SPLASH_SCREEN);
                 },
                 child: Text(
                   "Já possui conta? Entrar",

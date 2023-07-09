@@ -1,24 +1,24 @@
-import 'package:agendamaq/controller/locality_controller.dart';
-import 'package:agendamaq/models/locality.dart';
+import 'package:agendamaq/controller/machine_controller.dart';
+import 'package:agendamaq/models/machine.dart';
 import 'package:agendamaq/routers/routers.dart';
 import 'package:agendamaq/static/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LocalityPage extends StatefulWidget {
-  const LocalityPage({super.key});
+class MachinePage extends StatefulWidget {
+  const MachinePage({super.key});
 
   @override
-  State<LocalityPage> createState() => _LocalityPageState();
+  State<MachinePage> createState() => _MachinePageState();
 }
 
-class _LocalityPageState extends State<LocalityPage> {
+class _MachinePageState extends State<MachinePage> {
   bool _isLoading = true;
   @override
   void initState() {
     super.initState();
-    Provider.of<LocalityController>(context, listen: false)
-        .loadLocalitys()
+    Provider.of<MachineController>(context, listen: false)
+        .loadMachines()
         .then((_) {
       setState(() {
         _isLoading = false;
@@ -28,8 +28,8 @@ class _LocalityPageState extends State<LocalityPage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<LocalityController>(context).items;
-    final List<Locality> loadedLocality = provider;
+    final provider = Provider.of<MachineController>(context).items;
+    final List<Machine> loadedMachine = provider;
     return Scaffold(
       backgroundColor: AgendaColors.setGrey,
       body: _isLoading
@@ -43,21 +43,18 @@ class _LocalityPageState extends State<LocalityPage> {
                   Container(
                     height: MediaQuery.of(context).size.height * 0.7,
                     child: ListView.builder(
-                      itemCount: loadedLocality.length,
+                      itemCount: loadedMachine.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
                             tileColor: Colors.white,
-                            title: Text(loadedLocality[index].name),
-                            subtitle: Text(
-                              '${loadedLocality[index].latitude}, ${loadedLocality[index].longitude}',
-                            ),
+                            title: Text(loadedMachine[index].name),
                             trailing: IconButton(
                               onPressed: () {
                                 Navigator.of(context).pushNamed(
-                                  AppRouters.CREATE_LOCALITY,
-                                  arguments: loadedLocality[index],
+                                  AppRouters.CREATE_MACHINE,
+                                  arguments: loadedMachine[index],
                                 );
                               },
                               icon: Icon(
@@ -73,7 +70,7 @@ class _LocalityPageState extends State<LocalityPage> {
                   FloatingActionButton(
                     onPressed: () {
                       Navigator.of(context)
-                          .pushNamed(AppRouters.CREATE_LOCALITY);
+                          .pushNamed(AppRouters.CREATE_MACHINE);
                     },
                     backgroundColor: AgendaColors.setGreen,
                     child: Icon(Icons.add),

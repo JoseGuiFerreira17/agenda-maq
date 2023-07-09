@@ -1,24 +1,26 @@
 import 'package:agendamaq/controller/locality_controller.dart';
-import 'package:agendamaq/models/locality.dart';
+import 'package:agendamaq/controller/machine_controller.dart';
+import 'package:agendamaq/controller/schedule_controller.dart';
+import 'package:agendamaq/models/schedule.dart';
 import 'package:agendamaq/routers/routers.dart';
 import 'package:agendamaq/static/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class LocalityPage extends StatefulWidget {
-  const LocalityPage({super.key});
+class SchedulePage extends StatefulWidget {
+  const SchedulePage({super.key});
 
   @override
-  State<LocalityPage> createState() => _LocalityPageState();
+  State<SchedulePage> createState() => _SchedulePageState();
 }
 
-class _LocalityPageState extends State<LocalityPage> {
+class _SchedulePageState extends State<SchedulePage> {
   bool _isLoading = true;
   @override
   void initState() {
     super.initState();
-    Provider.of<LocalityController>(context, listen: false)
-        .loadLocalitys()
+    Provider.of<ScheduleController>(context, listen: false)
+        .loadSchedules()
         .then((_) {
       setState(() {
         _isLoading = false;
@@ -28,12 +30,12 @@ class _LocalityPageState extends State<LocalityPage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<LocalityController>(context).items;
-    final List<Locality> loadedLocality = provider;
+    final provider = Provider.of<ScheduleController>(context).items;
+    final List<Schedule> loadedSchedule = provider;
     return Scaffold(
       backgroundColor: AgendaColors.setGrey,
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Center(
@@ -43,22 +45,21 @@ class _LocalityPageState extends State<LocalityPage> {
                   Container(
                     height: MediaQuery.of(context).size.height * 0.7,
                     child: ListView.builder(
-                      itemCount: loadedLocality.length,
+                      itemCount: loadedSchedule.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: ListTile(
                             tileColor: Colors.white,
-                            title: Text(loadedLocality[index].name),
+                            title: Text(
+                                '${loadedSchedule[index].month}-${loadedSchedule[index].year}'),
                             subtitle: Text(
-                              '${loadedLocality[index].latitude}, ${loadedLocality[index].longitude}',
-                            ),
+                                '${Provider.of<MachineController>(context).getName(loadedSchedule[index].machine)} - ${Provider.of<LocalityController>(context).getName(loadedSchedule[index].locality)}'),
                             trailing: IconButton(
                               onPressed: () {
                                 Navigator.of(context).pushNamed(
-                                  AppRouters.CREATE_LOCALITY,
-                                  arguments: loadedLocality[index],
-                                );
+                                    AppRouters.CREATE_SCHEDULE,
+                                    arguments: loadedSchedule[index]);
                               },
                               icon: Icon(
                                 Icons.edit,
@@ -73,7 +74,7 @@ class _LocalityPageState extends State<LocalityPage> {
                   FloatingActionButton(
                     onPressed: () {
                       Navigator.of(context)
-                          .pushNamed(AppRouters.CREATE_LOCALITY);
+                          .pushNamed(AppRouters.CREATE_SCHEDULE);
                     },
                     backgroundColor: AgendaColors.setGreen,
                     child: Icon(Icons.add),

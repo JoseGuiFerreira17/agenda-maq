@@ -1,6 +1,11 @@
 import 'package:agendamaq/app/locality/locality_page.dart';
+import 'package:agendamaq/app/machine/machine_page.dart';
+import 'package:agendamaq/app/schedule/schedule_page.dart';
+import 'package:agendamaq/app/service/service_page.dart';
+import 'package:agendamaq/routers/routers.dart';
 import 'package:agendamaq/static/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,22 +16,11 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   int _selectedIndex = 0;
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static const List<Widget> _widgetOptions = <Widget>[
     LocalityPage(),
-    Text(
-      'Index 1: Business',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 2: School',
-      style: optionStyle,
-    ),
-    Text(
-      'Index 3: Settings',
-      style: optionStyle,
-    ),
+    MachinePage(),
+    SchedulePage(),
+    ServicePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -42,6 +36,50 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: AgendaColors.setGreen,
         title: const Text('AgendaMaq'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => Dialog(
+                  child: Container(
+                    width: 100,
+                    height: 100,
+                    margin: EdgeInsets.all(10),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Deseja sair?'),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TextButton(
+                              onPressed: () async {
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
+                                prefs.remove("access");
+                                Navigator.of(context)
+                                    .pushReplacementNamed(AppRouters.INITIAL);
+                              },
+                              child: Text('SIM'),
+                            ),
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text('NÃO'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+            icon: Icon(Icons.logout),
+          )
+        ],
       ),
       body: Center(
         child: _widgetOptions.elementAt(_selectedIndex),

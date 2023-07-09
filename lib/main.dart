@@ -1,16 +1,10 @@
 import 'package:agendamaq/agenda_maq.dart';
-import 'package:agendamaq/services/auth_services.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
-  //await Firebase.initializeApp();
+  await dotenv.load(fileName: ".env");
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => AuthSevices()),
-      ],
-      child: AgendaMacApp(),
-    ),
+    AgendaMacApp(),
   );
 }
